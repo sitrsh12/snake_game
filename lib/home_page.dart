@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -215,7 +217,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       barrierDismissible: false,
       context: context,
       builder: (_) => Dialog(
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(15.0))),
         child: Container(
           child: Column(
@@ -224,7 +226,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.blueGrey,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(15),
@@ -236,7 +238,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
+                    children: const <Widget>[
                       Icon(
                         Icons.app_registration,
                         size: 40,
@@ -246,12 +248,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 5.0,
               ),
-              Center(
+              const Center(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20.0, 10, 20, 10),
+                  padding: EdgeInsets.fromLTRB(20.0, 10, 20, 10),
                   child: Text(
                     "Game Over",
                     style: TextStyle(color: Colors.orange, fontSize: 40),
@@ -267,7 +269,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
-                      child: Text("Play Again",
+                      child: const Text("Play Again",
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.normal)),
                       color: Colors.blueGrey,
