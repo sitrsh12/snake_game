@@ -8,15 +8,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  late bool _hasStarted;
-  late Animation _snakeAnimation;
-  late AnimationController _snakeController;
+  bool _hasStarted= false;
+  Animation<double>? _snakeAnimation;
+  AnimationController? _snakeController;
   List _snake = [600, 601, 602, 603];
   final int _noOfSquares = 600;
   final Duration _duration = Duration(milliseconds: 250);
   final int _squareSize = 20;
-  late String _currentSnakeDirection;
-  late int _snakeFoodPosition;
+  String? _currentSnakeDirection;
+  int? _snakeFoodPosition;
   Random _random = new Random();
 
   @override
@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     } while (_snake.contains(_snakeFoodPosition));
     _snakeController = AnimationController(vsync: this, duration: _duration);
     _snakeAnimation =
-        CurvedAnimation(curve: Curves.easeInOut, parent: _snakeController);
+        CurvedAnimation(curve: Curves.easeInOut, parent: _snakeController!);
   }
 
   void _gameStart() {
@@ -69,8 +69,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       //   }
       // }
 
-      return false;
     }
+    return false;
   }
 
   void _updateSnake() {
@@ -143,15 +143,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           onPressed: () {
             setState(() {
               if (_hasStarted)
-                _snakeController.forward();
+                _snakeController?.forward();
               else
-                _snakeController.reverse();
+                _snakeController?.reverse();
               _hasStarted = !_hasStarted;
               _gameStart();
             });
           },
           icon: AnimatedIcon(
-              icon: AnimatedIcons.play_pause, progress: _snakeAnimation)),
+              icon: AnimatedIcons.play_pause,
+              progress: _snakeAnimation!
+          )),
       body: Container(
         height: 620,
         width: MediaQuery.of(context).size.width,
