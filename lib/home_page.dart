@@ -14,8 +14,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Animation<double>? _snakeAnimation;
   AnimationController? _snakeController;
   List _snake = [600, 601, 602, 603];
-  final int _noOfSquares = 600;
-  final Duration _duration = Duration(milliseconds: 250);
+  final int _noOfSquares = 620;
+  final Duration _duration = Duration(milliseconds: 500);
   final int _squareSize = 20;
   String? _currentSnakeDirection;
   int? _snakeFoodPosition;
@@ -46,33 +46,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _snakeAnimation =
         CurvedAnimation(curve: Curves.easeInOut, parent: _snakeController!);
   }
+  Duration delay = const Duration(milliseconds: 200);
+  // void _gameStart() {
+  //   Timer.periodic(delay, (Timer timer) {
+  //         delay += const Duration(milliseconds: 200);
+  //         timer.cancel();
+  //         timer = Timer.periodic(delay, (timer) {
+  //           _updateSnake();
+  //         });
+  //     if (_hasStarted) timer.cancel();
+  //   });
+  // }
 
   void _gameStart() {
-    Timer.periodic(Duration(milliseconds: 500), (Timer timer) {
+    Timer.periodic(const Duration(milliseconds: 500), (Timer timer) {
       _updateSnake();
       if (_hasStarted) timer.cancel();
     });
   }
 
-  bool _gameOver() {
-    for (int i = 0; i < _snake.length - 1; i++){
-      if (_snake.last == _snake[i]){
-        return true;
-      }
-      if(_currentSnakeDirection == "RIGHT" || _currentSnakeDirection == "LEFT"){
-        if(_snake.last % 20==0){
-          return true;
-        }
-      }
 
-      // if(_currentSnakeDirection == "UP" || _currentSnakeDirection == "DOWN"){
-      //   if(_snake.last % 31==0){
-      //     return true;
-      //   }
-      // }
 
-    }
-    return false;
+
+  void gameOver(){
+    reStart();
+    gameOverDialog(context);
   }
 
   void _updateSnake() {
@@ -80,45 +78,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       setState(() {
         switch (_currentSnakeDirection) {
           case 'DOWN':
-            if (_snake.last > _noOfSquares)
-              _snake.add(
-                  _snake.last + _squareSize - (_noOfSquares + _squareSize));
-            else
+            if (_snake.last > _noOfSquares) {
+              gameOver();
+            }
+            else {
               _snake.add(_snake.last + _squareSize);
+            }
             break;
           case 'UP':
-            if (_snake.last < _squareSize)
-              _snake.add(
-                  _snake.last - _squareSize + (_noOfSquares + _squareSize));
-            else
+            if (_snake.last < _squareSize) {
+              gameOver();
+            } else {
               _snake.add(_snake.last - _squareSize);
+            }
             break;
           case 'RIGHT':
-            if ((_snake.last + 1) % _squareSize == 0)
-              _snake.add(_snake.last + 1 - _squareSize);
-            else
+            if ((_snake.last + 1) % _squareSize == 0) {
+              gameOver();
+            } else {
               _snake.add(_snake.last + 1);
+            }
             break;
           case 'LEFT':
-            if ((_snake.last) % _squareSize == 0)
-              _snake.add(_snake.last - 1 + _squareSize);
-            else
+            if ((_snake.last) % _squareSize == 0) {
+              gameOver();
+            } else {
               _snake.add(_snake.last - 1);
+            }
         }
 
-        if (_snake.last != _snakeFoodPosition)
+        if (_snake.last != _snakeFoodPosition) {
           _snake.removeAt(0);
-        else {
+        } else {
           do {
             _snakeFoodPosition = _random.nextInt(_noOfSquares);
-          } while (_snake.contains(_snakeFoodPosition));
-        }
-
-        if (_gameOver()) {
-          setState(() {
-            _hasStarted = !_hasStarted;
-          });
-          gameOverDialog(context);
+          } while (
+          _snake.contains(_snakeFoodPosition)
+          );
         }
       });
     }
@@ -128,7 +124,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Snake Game',
+        title: const Text('Snake Game',
             style: TextStyle(color: Colors.white, fontSize: 20.0)),
         centerTitle: false,
         backgroundColor: Colors.blueGrey,
@@ -140,14 +136,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           elevation: 15,
           label: Text(
             _hasStarted ? 'Start' : 'Pause',
-            style: TextStyle(),
+            style: const TextStyle(),
           ),
           onPressed: () {
             setState(() {
-              if (_hasStarted)
+              if (_hasStarted) {
                 _snakeController?.forward();
-              else
+              } else {
                 _snakeController?.reverse();
+              }
               _hasStarted = !_hasStarted;
               _gameStart();
             });
@@ -156,7 +153,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               icon: AnimatedIcons.play_pause,
               progress: _snakeAnimation!
           )),
-      body: Container(
+      body: SizedBox(
         height: 620,
         width: MediaQuery.of(context).size.width,
         child: Padding(
@@ -166,30 +163,32 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             child: Center(
               child: GestureDetector(
                 onVerticalDragUpdate: (drag) {
-                  if (drag.delta.dy > 0 && _currentSnakeDirection != 'UP')
+                  if (drag.delta.dy > 0 && _currentSnakeDirection != 'UP') {
                     _currentSnakeDirection = 'DOWN';
-                  else if (drag.delta.dy < 0 && _currentSnakeDirection != 'DOWN')
+                  } else if (drag.delta.dy < 0 && _currentSnakeDirection != 'DOWN') {
                     _currentSnakeDirection = 'UP';
+                  }
                 },
                 onHorizontalDragUpdate: (drag) {
-                  if (drag.delta.dx > 0 && _currentSnakeDirection != 'LEFT')
+                  if (drag.delta.dx > 0 && _currentSnakeDirection != 'LEFT') {
                     _currentSnakeDirection = 'RIGHT';
-                  else if (drag.delta.dx < 0 && _currentSnakeDirection != 'RIGHT')
+                  } else if (drag.delta.dx < 0 && _currentSnakeDirection != 'RIGHT') {
                     _currentSnakeDirection = 'LEFT';
+                  }
                 },
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: GridView.builder(
                     itemCount: _squareSize + _noOfSquares,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: _squareSize),
                     itemBuilder: (BuildContext context, int index) {
                       return Center(
                         child: Container(
                           padding: _snake.contains(index)
-                              ? EdgeInsets.all(1)
-                              : EdgeInsets.all(0),
+                              ? const EdgeInsets.all(1)
+                              : const EdgeInsets.all(0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(5),
                             child: Container(
@@ -269,15 +268,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(5.0),
                       ),
-                      child: const Text("Play Again",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.normal)),
                       color: Colors.blueGrey,
                       textColor: Colors.white,
                       onPressed: () {
                         Navigator.pop(context);
                         reStart();
                       },
+                      child: const Text("Play Again",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.normal)),
                     ),
                   ],
                 ),
